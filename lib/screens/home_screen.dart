@@ -16,13 +16,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   double get _startingBalance => widget.startingBalance;
 
-  void _addNewTransaction(String txTitle, double txAmount, bool isIncome) {
+  void _addNewTransaction(String txTitle, double txAmount, bool isIncome, String category) {
     final newTx = Transaction(
       id: DateTime.now().toString(),
       title: txTitle,
       amount: txAmount,
       date: DateTime.now(),
       isIncome: isIncome,
+      category: category,
     );
 
     setState(() {
@@ -31,39 +32,54 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   double get totalIncome {
-    double total = 0;
-    for (var tx in _userTransactions) {
-      if (tx.isIncome) total += tx.amount;
-    }
-    return total;
+    return _userTransactions
+        .where((tx) => tx.isIncome)
+        .fold(0.0, (sum, tx) => sum + tx.amount);
   }
 
   double get totalExpense {
-    double total = 0;
-    for (var tx in _userTransactions) {
-      if (!tx.isIncome) total += tx.amount;
-    }
-    return total;
+    return _userTransactions
+        .where((tx) => !tx.isIncome)
+        .fold(0.0, (sum, tx) => sum + tx.amount);
   }
 
   double get balance => _startingBalance + totalIncome - totalExpense;
 
-  void _startAddNewTransaction(BuildContext ctx) {
-    showModalBottomSheet(
-        context: ctx,
-        builder: (_) {
-          return NewTransaction(addTx: _addNewTransaction);
-        });
-  }
+ void _startAddNewTransaction(BuildContext ctx) {
+  showModalBottomSheet(
+    context: ctx,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    builder: (_) {
+      return Container(
+        height: MediaQuery.of(ctx).size.height * 0.45, 
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25),
+            topRight: Radius.circular(25),
+          ),
+        ),
+        child: NewTransaction(addTx: _addNewTransaction),
+      );
+    },
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 51, 39, 60),
       appBar: AppBar(
-        title: const Text('แอปรายรับรายจ่าย'),
+        backgroundColor: const Color.fromARGB(255, 51, 39, 60),
+        title: const Text('EXPENSE APP', style: TextStyle(
+          color: Color(0xFFF36950),
+          fontWeight: FontWeight.bold)
+          ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.add, color: Colors.white),
             onPressed: () => _startAddNewTransaction(context),
           ),
         ],
@@ -71,39 +87,51 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // ---------- Card สรุปยอด ----------
           Card(
-            elevation: 5,
-            margin: const EdgeInsets.all(10),
+            color: const Color.fromARGB(255, 46, 191, 156),
+            elevation: 8,
+            margin: const EdgeInsets.all(12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200)),
             child: Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+                  // ยอดเงินคงเหลือ
                   Column(
                     children: [
-                      const Text('ยอดเงินคงเหลือ'),
+                      const Text('ยอดเงินคงเหลือ', style: TextStyle(color: Colors.white, fontSize: 17)),
+                      const SizedBox(height: 5),
                       Text(
-                        '฿ ${balance.toStringAsFixed(2)}',
+                        '${balance.toStringAsFixed(0)} บาท',
                         style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
+                            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
                       ),
                     ],
                   ),
+                  // รายรับ
                   Column(
                     children: [
-                      const Text('รายรับ'),
+                      const Text('รายรับ', style: TextStyle(
+                        color: Colors.greenAccent,
+                        fontSize: 17,
+                        )),
+                      const SizedBox(height: 5),
                       Text(
-                        '฿${totalIncome.toStringAsFixed(2)}',
-                        style: const TextStyle(color: Colors.green),
+                        '${totalIncome.toStringAsFixed(0)} บาท',
+                        style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                     ],
                   ),
+                  // รายจ่าย
                   Column(
                     children: [
-                      const Text('รายจ่าย'),
+                      const Text('รายจ่าย', style: TextStyle(color: Colors.redAccent, fontSize: 17)),
+                      const SizedBox(height: 5),
                       Text(
-                        '฿${totalExpense.toStringAsFixed(2)}',
-                        style: const TextStyle(color: Colors.red),
+                        '${totalExpense.toStringAsFixed(0)} บาท',
+                        style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                     ],
                   ),
@@ -111,14 +139,22 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          const SizedBox(height: 10),
+          // ---------- List รายการ ----------
           Expanded(
             child: TransactionList(transactions: _userTransactions),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () => _startAddNewTransaction(context),
+      floatingActionButton: SizedBox(
+        width: 60,
+        height: 60,
+        child: FloatingActionButton(
+          onPressed: () => _startAddNewTransaction(context),
+          backgroundColor: const Color.fromARGB(255, 46, 191, 156),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          child: const Icon(Icons.add, color: Colors.white, size: 32),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );

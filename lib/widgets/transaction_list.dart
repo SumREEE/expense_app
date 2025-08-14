@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/transaction.dart';
+import 'package:intl/intl.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -8,11 +9,20 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formatter = NumberFormat('#,###'); // คั่นหลักพัน
+
     return transactions.isEmpty
-        ? const Center(
-            child: Text(
-              'ยังไม่มีรายการ',
-              style: TextStyle(fontSize: 20),
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.receipt_long, size: 80, color: Colors.grey[400]),
+                const SizedBox(height: 20),
+                const Text(
+                  'ยังไม่มีรายการ',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                ),
+              ],
             ),
           )
         : ListView.builder(
@@ -20,32 +30,32 @@ class TransactionList extends StatelessWidget {
             itemBuilder: (ctx, index) {
               final tx = transactions[index];
               return Card(
-                margin:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                elevation: 3,
+                margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                 child: ListTile(
-                  leading: CircleAvatar(
-                    radius: 30,
-                    backgroundColor:
-                        tx.isIncome ? Colors.green[100] : Colors.red[100],
-                    child: Padding(
-                      padding: const EdgeInsets.all(6),
-                      child: FittedBox(
-                        child: Text(
-                          '฿${tx.amount.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            color: tx.isIncome ? Colors.green : Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   title: Text(
                     tx.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                    ),
                   ),
                   subtitle: Text(
-                    tx.date.toString(),
+                    '${DateFormat('dd/MM/yyyy HH:mm').format(tx.date)}',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                  trailing: Text(
+                    '${formatter.format(tx.amount)} บาท',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                      color: tx.isIncome ? Colors.green : Colors.red,
+                    ),
                   ),
                 ),
               );

@@ -1,11 +1,10 @@
-import 'package:flutter/foundation.dart';
-
 class Transaction {
   final String id;
   final String title;
   final double amount;
   final DateTime date;
-  final bool isIncome; // true = รายรับ, false = รายจ่าย
+  final bool isIncome;
+  final String category; // เพิ่ม category
 
   Transaction({
     required this.id,
@@ -13,5 +12,6 @@ class Transaction {
     required this.amount,
     required this.date,
     required this.isIncome,
+    required this.category,
   });
 }
