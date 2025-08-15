@@ -44,46 +44,52 @@ class _StartScreenState extends State<StartScreen> {
               const SizedBox(height: 40),
 
               // ---------- TextField ใน Card ----------
-              Card(
-                color: Colors.white,
-                elevation: 8,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(150)),
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: TextField(
-                    style: const TextStyle(
-                        color: Color.fromARGB(255, 51, 39, 60)),
-                    decoration: InputDecoration(
-                      labelText: 'ยอดเงินเริ่มต้น',
-                      labelStyle:
-                          const TextStyle(color: Color.fromARGB(255, 51, 39, 60)),
-                      prefixText: '฿ ',
-                      prefixStyle:
-                          const TextStyle(color: Color.fromARGB(255, 51, 39, 60)),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(150),
-                        borderSide: const BorderSide(
+              SizedBox(
+                width: 400,
+                child: Card(
+                  color: Colors.white,
+                  elevation: 8,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(150)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: TextField(
+                      style: const TextStyle(
                           color: Color.fromARGB(255, 51, 39, 60),
+                          fontSize: 20,
+                          ),
+                      decoration: InputDecoration(
+                        labelText: 'ยอดเงินเริ่มต้น',
+                        labelStyle: const TextStyle(
+                            color: Color.fromARGB(255, 51, 39, 60)),
+                        prefixText: '฿ ',
+                        prefixStyle: const TextStyle(
+                            color: Color.fromARGB(255, 51, 39, 60),
+                            fontSize: 20),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(150),
+                          borderSide: const BorderSide(
+                            color: Color.fromARGB(255, 51, 39, 60),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(150),
+                          borderSide: const BorderSide(
+                            color: Color.fromARGB(255, 90, 90, 90),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(150),
+                          borderSide: const BorderSide(
+                            color: Color.fromARGB(255, 90, 90, 90),
+                            width: 2,
+                          ),
                         ),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(150),
-                        borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 51, 39, 60),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(150),
-                        borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 51, 39, 60),
-                          width: 2,
-                        ),
-                      ),
+                      controller: _balanceController,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                     ),
-                    controller: _balanceController,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
                   ),
                 ),
               ),
@@ -92,7 +98,7 @@ class _StartScreenState extends State<StartScreen> {
 
               // ---------- ปุ่มเริ่มใช้งาน ----------
               SizedBox(
-                width: double.infinity,
+                width: 400, 
                 height: 55,
                 child: ElevatedButton.icon(
                   onPressed: _submitBalance,
